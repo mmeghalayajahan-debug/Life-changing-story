@@ -1,0 +1,6 @@
+{
+  "name": "জীবন বদলের গল্প (Stories of Changing Lives)",
+  "description": "A digital platform sharing inspirational humanitarian stories and global travel guides.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["Humanitarian Blogging", "Travel Itineraries", "Community Support"]
+}
