@@ -1,22 +1,41 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Search, Menu, X } from 'lucide-react';
+import { Search, Menu, X, LogIn, LogOut, PlusCircle, User as UserIcon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../../lib/utils';
+import { useAuth } from '../../context/AuthContext';
+import { signInWithGoogle, auth } from '../../lib/firebase';
 
 const NAV_ITEMS = [
   { name: 'হোম', path: '/' },
   { name: 'মানবিক ব্লগ', path: '/humanitarian' },
   { name: 'ভ্রমণ গাইড', path: '/travel' },
   { name: 'আমাদের দল', path: '/team' },
-  { name: 'প্রভাবের গল্প', path: '/impact' },
+  { name: 'প্রভাতের গল্প', path: '/impact' },
   { name: 'যোগাযোগ', path: '/contact' },
 ];
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, loading } = useAuth();
   const location = useLocation();
+
+  const handleLogin = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,7 +72,7 @@ export default function Header() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-6">
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.path}
@@ -66,12 +85,53 @@ export default function Header() {
               {item.name}
               {location.pathname === item.path && (
                 <motion.div 
-                  layoutId="nav-underline"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent"
+                   layoutId="nav-underline"
+                   className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent"
                 />
               )}
             </Link>
           ))}
+          
+          <div className="h-6 w-px bg-stone-200 mx-2" />
+          
+          {!loading && (
+            user ? (
+              <div className="flex items-center gap-4">
+                <Link 
+                  to="/submit-story" 
+                  className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-full text-xs font-bold hover:bg-stone-800 transition-all"
+                >
+                  <PlusCircle size={16} />
+                  <span className="bengali-text">গল্প দিন</span>
+                </Link>
+                <div className="group relative">
+                  <button className="w-10 h-10 rounded-full border-2 border-accent overflow-hidden">
+                    <img src={user.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`} alt={user.displayName || 'User'} className="w-full h-full object-cover" />
+                  </button>
+                  <div className="absolute right-0 top-full pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                    <div className="bg-white rounded-2xl shadow-xl border border-stone-100 p-2 min-w-[160px]">
+                      <button 
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-stone-600 hover:bg-stone-50 rounded-xl transition-colors"
+                      >
+                        <LogOut size={16} />
+                        <span className="bengali-text">লগ আউট</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <button 
+                onClick={handleLogin}
+                className="flex items-center gap-2 text-sm font-bold text-primary hover:text-accent transition-colors"
+              >
+                <LogIn size={18} />
+                <span className="bengali-text">লগইন</span>
+              </button>
+            )
+          )}
+
           <button className="p-2 text-stone-600 hover:text-primary transition-colors">
             <Search size={20} />
           </button>
@@ -109,6 +169,37 @@ export default function Header() {
                   {item.name}
                 </Link>
               ))}
+
+              {!loading && (
+                user ? (
+                  <>
+                    <Link 
+                      to="/submit-story" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-2xl text-sm font-bold justify-center"
+                    >
+                      <PlusCircle size={20} />
+                      <span className="bengali-text">গল্প দিন</span>
+                    </Link>
+                    <button 
+                      onClick={handleLogout}
+                      className="flex items-center gap-2 justify-center py-3 text-stone-600 font-bold"
+                    >
+                      <LogOut size={20} />
+                      <span className="bengali-text">লগ আউট</span>
+                    </button>
+                  </>
+                ) : (
+                  <button 
+                    onClick={handleLogin}
+                    className="flex items-center gap-2 justify-center bg-accent text-primary px-6 py-3 rounded-2xl text-sm font-bold"
+                  >
+                    <LogIn size={20} />
+                    <span className="bengali-text">লগইন</span>
+                  </button>
+                )
+              )}
+
               <div className="relative mt-2">
                 <input 
                   type="text" 

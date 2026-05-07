@@ -1,10 +1,13 @@
-import { BLOG_POSTS } from '../constants';
 import BlogGrid from '../components/BlogGrid';
 import { Map as MapIcon, Compass, Plane } from 'lucide-react';
 import { motion } from 'motion/react';
+import { usePosts } from '../hooks/usePosts';
+import { BLOG_POSTS } from '../constants';
 
 export default function TravelGuides() {
-  const posts = BLOG_POSTS.filter(p => p.category === 'Travel');
+  const { posts: firebasePosts, loading } = usePosts('Travel');
+  const staticPosts = BLOG_POSTS.filter(p => p.category === 'Travel');
+  const posts = [...firebasePosts, ...staticPosts];
 
   return (
     <div className="pt-32 pb-24 min-h-screen">

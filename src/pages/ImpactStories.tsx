@@ -13,7 +13,7 @@ export default function ImpactStories() {
       <div className="container mx-auto px-4">
         <header className="mb-16 text-center max-w-2xl mx-auto">
           <span className="text-accent uppercase tracking-[0.2em] font-bold text-xs mb-4 block">আমাদের প্রভাব</span>
-          <h1 className="text-5xl md:text-6xl font-serif text-primary mb-6 bengali-text">পরিবর্তনের গল্প</h1>
+          <h1 className="text-5xl md:text-6xl font-serif text-primary mb-6 bengali-text">প্রভাতের গল্প</h1>
           <p className="text-stone-500 bengali-text">
             সম্প্রদায়ের শক্তির একটি প্রমাণ। আমাদের গল্প বলা এবং মানবিক প্রচেষ্টা বাস্তব জীবনে যে পরিমাপযোগ্য প্রভাব ফেলেছে তা অন্বেষণ করুন।
           </p>

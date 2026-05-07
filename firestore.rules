@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation for Post
+    function isValidPost(data) {
+      return data.title is string && data.title.size() > 0 && data.title.size() <= 200
+        && data.content is string && data.content.size() > 0 && data.content.size() <= 50000
+        && data.authorId == request.auth.uid
+        && data.category in ['Humanitarian', 'Travel']
+        && (data.status == 'draft' || data.status == 'published')
+        && (!('image' in data) || (data.image is string && data.image.size() <= 2048))
+        && (!('tags' in data) || (data.tags is list && data.tags.size() <= 10))
+        && data.createdAt == request.time;
+    }
+
+    // Validation for User
+    function isValidUser(data) {
+      return data.email is string && data.email.size() > 0 && data.email.size() <= 255
+        && (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 100))
+        && (!('role' in data) || (data.role == 'user')); // Prevent self-promoting to admin
+    }
+
+    // Match /posts/{postId}
+    match /posts/{postId} {
+      allow read: if true; // Everyone can read blog posts
+      
+      allow create: if isSignedIn() 
+        && isValidId(postId)
+        && isValidPost(incoming())
+        && incoming().authorId == request.auth.uid;
+
+      allow update: if isOwner(existing().authorId)
+        && isValidPost(incoming())
+        && incoming().authorId == existing().authorId
+        && incoming().createdAt == existing().createdAt
+        && (
+          // General Update
+          incoming().diff(existing()).affectedKeys().hasOnly(['title', 'excerpt', 'content', 'image', 'status', 'tags'])
+        );
+
+      allow delete: if isOwner(existing().authorId);
+    }
+
+    // Match /users/{userId}
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      
+      allow create: if isOwner(userId) 
+        && isValidUser(incoming());
+
+      allow update: if isOwner(userId)
+        && isValidUser(incoming())
+        && incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL']);
+    }
+  }
+}

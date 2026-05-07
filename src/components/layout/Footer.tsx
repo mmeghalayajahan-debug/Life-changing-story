@@ -40,7 +40,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li><Link to="/humanitarian" className="hover:text-accent transition-colors">মানবিক ব্লগ</Link></li>
               <li><Link to="/travel" className="hover:text-accent transition-colors">ভ্রমণ গাইড</Link></li>
-              <li><Link to="/impact" className="hover:text-accent transition-colors">প্রভাবের গল্প</Link></li>
+              <li><Link to="/impact" className="hover:text-accent transition-colors">প্রভাতের গল্প</Link></li>
               <li><Link to="/contact" className="hover:text-accent transition-colors">আমাদের সাহায্য করুন</Link></li>
             </ul>
           </div>

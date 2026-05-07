@@ -1,0 +1,45 @@
+{
+  "entities": {
+    "Post": {
+      "title": "Blog Post",
+      "description": "A story or article shared on the platform.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "The title of the story" },
+        "excerpt": { "type": "string", "description": "Short summary" },
+        "content": { "type": "string", "description": "The full story content" },
+        "author": { "type": "string", "description": "Name of the writer" },
+        "authorId": { "type": "string", "description": "Firebase Auth UID of the author" },
+        "date": { "type": "string", "format": "date-time" },
+        "image": { "type": "string", "description": "URL of the featured image" },
+        "category": { "type": "string", "enum": ["Humanitarian", "Travel"] },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["draft", "published"] }
+      },
+      "required": ["title", "content", "authorId", "category"]
+    },
+    "User": {
+      "title": "User Profile",
+      "description": "Information about the registered user.",
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "admin"] }
+      },
+      "required": ["email"]
+    }
+  },
+  "firestore": {
+    "/posts/{postId}": {
+      "schema": "Post",
+      "description": "Collection of all blog posts"
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Individual user profiles"
+    }
+  }
+}

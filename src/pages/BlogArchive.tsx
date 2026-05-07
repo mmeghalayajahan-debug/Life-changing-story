@@ -1,11 +1,18 @@
-import { BLOG_POSTS } from '../constants';
 import BlogGrid from '../components/BlogGrid';
-import { Search, Filter } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useState } from 'react';
+import { usePosts } from '../hooks/usePosts';
+import { BLOG_POSTS } from '../constants';
 
 export default function BlogArchive() {
-  const [filter, setFilter] = useState('All');
-  const posts = BLOG_POSTS.filter(p => p.category === 'Humanitarian');
+  const [filter, setFilter] = useState('সব');
+  const { posts: firebasePosts, loading } = usePosts('Humanitarian');
+  
+  // Combine static and firebase posts for a richer experience initially
+  const staticPosts = BLOG_POSTS.filter(p => p.category === 'Humanitarian');
+  const allPosts = [...firebasePosts, ...staticPosts];
+  
+  const posts = filter === 'সব' ? allPosts : allPosts.filter(p => p.tags?.includes(filter));
   
   return (
     <div className="pt-32 pb-24 min-h-screen">

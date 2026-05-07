@@ -2,8 +2,12 @@ import { motion } from 'motion/react';
 import { ArrowRight, MapPin, Globe, Quote } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { BLOG_POSTS } from '../constants';
+import { usePosts } from '../hooks/usePosts';
 
 export default function Home() {
+  const { posts: firebasePosts } = usePosts('Humanitarian');
+  const staticPosts = BLOG_POSTS.filter(p => p.category === 'Humanitarian');
+  const humanitarianPosts = [...firebasePosts, ...staticPosts].slice(0, 3);
   return (
     <div className="overflow-hidden">
       {/* Hero Section */}
@@ -34,7 +38,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/humanitarian" className="bg-primary hover:bg-stone-800 text-white px-8 py-4 rounded-full font-bold transition-all transform hover:scale-105 shadow-xl flex items-center justify-center gap-2 bengali-text">
-                প্রভাবের গল্প পড়ুন <ArrowRight size={18} />
+                প্রভাতের গল্প পড়ুন <ArrowRight size={18} />
               </Link>
               <Link to="/travel" className="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white border border-white/40 px-8 py-4 rounded-full font-bold transition-all bengali-text">
                 আপনার যাত্রা পরিকল্পনা করুন
@@ -69,7 +73,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {BLOG_POSTS.filter(p => p.category === 'Humanitarian').map((post, index) => (
+            {humanitarianPosts.map((post, index) => (
               <motion.div 
                 key={post.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -86,7 +90,7 @@ export default function Home() {
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute top-4 left-4 bg-primary text-white text-[10px] font-bold tracking-widest px-3 py-1 rounded-full uppercase">
-                    {post.tags[0]}
+                    {post.tags?.[0] || post.category}
                   </div>
                 </div>
                 <h3 className="text-2xl font-serif mb-3 group-hover:text-accent transition-colors">{post.title}</h3>
@@ -183,7 +187,7 @@ export default function Home() {
             {[
               { name: "রফিকুল ইসলাম", role: "উপকারভোগী", quote: "এখানে শেয়ার করা গল্পগুলি আমাদের গ্রামকে স্বীকৃতি দিয়েছে যা শেষ পর্যন্ত একটি লাইব্রেরি পেতে সাহায্য করেছে।" },
               { name: "এলেনা গিলবার্ট", role: "ভ্রমণপিপাসু", quote: "যারা পর্যটন ফাঁদের বাইরে আসল বিশ্ব দেখতে চান তাদের জন্য সেরা ভ্রমণ গাইড।" },
-              { name: "তানভীর আহমেদ", role: "দাতা", quote: "প্রভাবের গল্পগুলো দেখার মাধ্যমে প্রতিটি অবদান অর্থপূর্ণ এবং স্বচ্ছ মনে হয়।" }
+              { name: "তানভীর আহমেদ", role: "দাতা", quote: "প্রভাতের গল্পগুলো দেখার মাধ্যমে প্রতিটি অবদান অর্থপূর্ণ এবং স্বচ্ছ মনে হয়।" }
             ].map((voice, i) => (
               <motion.div 
                 key={i}

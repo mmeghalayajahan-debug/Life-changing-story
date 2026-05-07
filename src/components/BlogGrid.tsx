@@ -27,7 +27,7 @@ export default function BlogGrid({ posts }: BlogGridProps) {
               referrerPolicy="no-referrer"
             />
             <div className="absolute top-4 left-4 flex gap-2">
-              {post.tags.slice(0, 2).map((tag) => (
+              {(post.tags || [post.category]).slice(0, 2).map((tag) => (
                 <span key={tag} className="bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold text-primary uppercase tracking-widest shadow-sm">
                   {tag}
                 </span>
