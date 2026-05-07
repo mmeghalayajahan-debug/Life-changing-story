@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { db } from '../lib/firebase';
+import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { collection, query, where, orderBy, onSnapshot, Timestamp } from 'firebase/firestore';
 
 export interface Post {
@@ -22,10 +22,11 @@ export function usePosts(category?: string) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
+    const path = 'posts';
+    let q = query(collection(db, path), orderBy('createdAt', 'desc'));
     
     if (category) {
-      q = query(collection(db, 'posts'), where('category', '==', category), orderBy('createdAt', 'desc'));
+      q = query(collection(db, path), where('category', '==', category), orderBy('createdAt', 'desc'));
     }
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -37,7 +38,7 @@ export function usePosts(category?: string) {
       setPosts(postsData);
       setLoading(false);
     }, (error) => {
-      console.error("Error fetching posts:", error);
+      handleFirestoreError(error, OperationType.GET, path);
       setLoading(false);
     });
 
